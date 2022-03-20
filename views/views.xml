@@ -1,4 +1,19 @@
 <flectra>
   <data>
+        <!-- Задачи -->
+    <record id="view_task_pf_form_inherit" model="ir.ui.view">
+      <field name="name">project.task.pf.inherit</field>
+      <field name="model">project.task</field>
+      <field name="inherit_id" ref="project.view_task_form2"/>
+      <field name="arch" type="xml">
+        <xpath expr="//notebook[last()]" position="inside">
+          <page string="Поля из ПланФикс" name="pf_fields">
+            <group string="Состав группы">
+             <field name="fields_ids"/>
+            </group>
+          </page>
+        </xpath>
+      </field>
+    </record>
   </data>
 </flectra>
