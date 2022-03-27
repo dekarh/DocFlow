@@ -16,7 +16,7 @@
     # Check https://github.com/flectra/flectra/blob/master/flectra/addons/base/module/module_data.xml
     # for the full list
     'category': 'Sign',
-    'version': '0.0.1',
+    'version': '0.0.4',
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'project'],
@@ -27,6 +27,7 @@
         'views/views.xml',
         #'views/templates.xml',
         'data/docflow_data.xml'
+        #'data/data.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

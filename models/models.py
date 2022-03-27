@@ -3,17 +3,17 @@
 from flectra import models, fields, api
 from flectra.exceptions import UserError
 
-class ProcessDF(models.Model):          # 'pr_' + id из ПФ
-    _name = 'project.process'
-    name = fields.Char(string='Название процесса в ПФ', required=True)
-    id_pf = fields.Integer(string='id процесса в ПФ', required=True)
-    type_ids = fields.One2many('project.task.type', 'process_id', string='Список статусов процесса', readonly=True)
+class TaskTemplateDF(models.Model):          # 'tt_' + id из ПФ
+    _name = 'docflow.tasktemplate'
+    name = fields.Char(string='Название шаблона')
+    id_pf = fields.Integer(string='id шаблона задачи (глобальный) в ПФ')
+    id_pf_general = fields.Integer(string='id шаблона задачи (в адр.стр) в ПФ')
+    task_ids = fields.One2many('project.task', 'tasktemplate_id', string='Список задач по шаблону ', readonly=True)
 
 
-class ProjectTaskTypeDF(models.Model):  # 'st_' + id из ПФ
-    _inherit = 'project.task.type'
-    # !!!! надо поменять на Many2many ((((
-    process_id = fields.Many2one('project.process',string='Связанный со статусом процесс')
+class ProjectDF(models.Model):          # 'pr_' + id из ПФ
+    _inherit = 'project.project'
+    id_pf = fields.Integer(string='id процесса(.project) в ПФ')
 
 
 class FieldTemplateDF(models.Model):    # 'tpl_field_' + id из ПФ
@@ -26,19 +26,24 @@ class FieldDF(models.Model):            # id task из ПФ (general) + '_' + te
     _name = 'docflow.field'
     name = fields.Char(string='Название поля')
     template_field_name_id = fields.Many2one('docflow.field.template', string='Название поля в ПФ', required=True)
-    template_field_id_pf = fields.Integer(compute="_template_field_id_pf", store=True)
+    template_field_id_pf = fields.Integer(compute="_template_field_id_pf")#, store=True)
     text = fields.Char(string='Параметр text')
     value = fields.Char(string='Параметр value')
-    task_id = fields.Many2one('project.task','Связанная с полем задача')
+    task_id = fields.Many2one('project.task',string='Связанная с полем задача')
 
     @api.depends('template_field_name_id')
     def _template_field_id_pf(self):
         self.template_field_id_pf = self.template_field_name_id.id_pf
 
 
-class TaskDF(models.Model):
+class TaskDF(models.Model):             # 'task_' + id (global) из ПФ
     _inherit = 'project.task'
     fields_ids = fields.One2many('docflow.field', 'task_id', string='Поля из ПФ', readonly=True)
+    tasktemplate_id = fields.Many2one('docflow.tasktemplate', string='Шаблон задачи')
+    id_pf = fields.Integer(string='id (глобальный) из ПФ')
+    id_pf_general = fields.Integer(string='id (адр.строка) из ПФ')
+    employee_id = fields.Many2one('hr.employee', string='Сотрудник')
+
 
 
 
