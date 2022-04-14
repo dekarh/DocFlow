@@ -24,7 +24,7 @@ class FieldTemplateDF(models.Model):    # 'tpl_field_' + id из ПФ
 
 class FieldDF(models.Model):            # id task из ПФ (general) + '_' + template field id из ПФ
     _name = 'docflow.field'
-    name = fields.Char(string='Название поля')
+    name = fields.Char(string='Название поля')#, compute="_name_from_template", )
     template_field_name_id = fields.Many2one('docflow.field.template', string='Название поля в ПФ', required=True)
     template_field_id_pf = fields.Integer(compute="_template_field_id_pf")#, store=True)
     text = fields.Char(string='Параметр text')
@@ -35,6 +35,10 @@ class FieldDF(models.Model):            # id task из ПФ (general) + '_' + te
     def _template_field_id_pf(self):
         self.template_field_id_pf = self.template_field_name_id.id_pf
 
+    #@api.depends('name')
+    #def _name_from_template(self):
+    #    self.name = self.template_field_name_id.name
+
 
 class TaskDF(models.Model):             # 'task_' + id (global) из ПФ
     _inherit = 'project.task'
@@ -44,6 +48,9 @@ class TaskDF(models.Model):             # 'task_' + id (global) из ПФ
     id_pf_general = fields.Integer(string='id (адр.строка) из ПФ')
     employee_id = fields.Many2one('hr.employee', string='Сотрудник')
 
+class ProjectTaskTypeDF(models.Model):
+    _inherit = 'project.task.type'
+    id_pf = fields.Integer(string='id (глобальный) из ПФ')
 
 
 

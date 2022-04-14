@@ -3,11 +3,12 @@
     'name': "docflow",
 
     'summary': """
-        Документооборот для flectra в стиле ПланФикс""",
+        Документооборот для flectra в стиле ПланФикс
+        """,
 
     'description': """
         Документооборот для flectra в стиле ПланФикс
-    """,
+        """,
 
     'author': "Денис Алексеев",
     'website': "https://github.com/dekarh/docflow",
@@ -16,7 +17,7 @@
     # Check https://github.com/flectra/flectra/blob/master/flectra/addons/base/module/module_data.xml
     # for the full list
     'category': 'Sign',
-    'version': '0.0.4',
+    'version': '0.0.5',
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'project'],
