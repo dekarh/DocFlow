@@ -15,5 +15,19 @@
         </xpath>
       </field>
     </record>
+
+    <record id="view_field_tree" model="ir.ui.view">
+      <field name="name">docflow.field.tree</field>
+      <field name="model">docflow.field</field>
+      <field name="arch" type="xml">
+        <tree string="Fields">
+          <field name="template_field_name_id"/>
+          <field name="text"/>
+          <field name="value"/>
+          <field name="task_id"/>
+        </tree>
+      </field>
+    </record>
+
   </data>
 </flectra>
