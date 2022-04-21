@@ -1,1 +1,0 @@
-../../hr_pf/get_pf/refresh_all_from_api.py

@@ -3,7 +3,7 @@
     'name': "docflow",
 
     'summary': """
-        Документооборот для flectra в стиле ПланФикс
+        Документооборот для flectra в стиле ПланФикс 
         """,
 
     'description': """
@@ -17,7 +17,7 @@
     # Check https://github.com/flectra/flectra/blob/master/flectra/addons/base/module/module_data.xml
     # for the full list
     'category': 'Sign',
-    'version': '0.0.5',
+    'version': '0.0.6',
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'project'],
@@ -25,10 +25,12 @@
     # always loaded
     'data': [
         #'security/ir.model.access.csv',
-        'views/views.xml',
+        'views/hr_views.xml',
+        'views/docflow_views.xml',
+        #'views/views.xml',
         #'views/templates.xml',
-        'data/docflow_data.xml'
-        #'data/data.xml'
+        'data/res.users.csv',
+        #'data/data.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
