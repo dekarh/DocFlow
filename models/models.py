@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import base64
+import os.path
+
 from flectra import models, fields, api
 from flectra import tools, _
 from flectra.exceptions import ValidationError, AccessError
 from flectra.modules.module import get_module_resource
 from flectra.exceptions import UserError
+
 
 #--------------------- hr_pf------------------------------------------------------------------------
 
@@ -117,10 +121,9 @@ class ProjectGroup(models.Model):
 
 #-------------------------- docflow-----------------------------------------------------------------------
 
-class GroupsPF(models.Model):
+class GroupsPF(models.Model):               #  id из ПФ
     """Дополнительные поля в группу доступа для синхронизации с ПФ"""
     _inherit = 'res.groups'
-
     id_from_pf = fields.Char(string='Идентификатор группы ПФ')
 
 
@@ -155,11 +158,27 @@ class FieldDF(models.Model):            # id task из ПФ (general) + '_' + te
     @api.depends('template_field_name_id')
     def _template_field_id_pf(self):
         self.template_field_id_pf = self.template_field_name_id.id_pf
-
     #@api.depends('name')
     #def _name_from_template(self):
     #    self.name = self.template_field_name_id.name
 
+    def create_file(self):
+        name = 'test_attachment.png'
+        file = open('/home/da3/seeingOFF/arenda/table.png', 'rb')
+        attachment = file.read()
+        self.env['ir.attachment'].create({
+            'name': name,
+            'datas': base64.b64encode(attachment),
+            'datas_fname': name,
+            'type': 'binary',
+            'res_model': 'project.task',
+            'res_id': self.task_id,
+        })
+        file.close()
+        return
+
+    def delete_file(self):
+        self.task_id.attachment_ids[0].unlink()
 
 class TaskDF(models.Model):             # 'task_' + id (global) из ПФ
     _inherit = 'project.task'
@@ -173,3 +192,40 @@ class ProjectTaskTypeDF(models.Model):
     _inherit = 'project.task.type'
     id_pf = fields.Integer(string='id (глобальный) из ПФ')
 
+
+
+class IrAttachmentDF(models.Model):     # 'att_' + id из ПФ
+    _inherit = 'ir.attachment'
+    file_id_pf = fields.Char(string='id файла из ПФ')
+    file_version_pf = fields.Integer(string='Номер версии файла из ПФ', default=0)
+    file_path_pf = fields.Char(string='Путь к файлу из ПФ')
+    project_id_external = fields.Char(string='Ссылка на проект')
+    task_id_external = fields.Char(string='Ссылка на задачу')
+
+    @api.model
+    def create(self, values):
+        if values.get('file_path_pf', False):
+            file = open(values['file_path_pf'], 'rb')
+            values['datas'] = base64.b64encode(file.read())
+            file.close()
+        if values.get('task_id_external', False):
+            result = self.env['ir.model.data'].search_read(
+                [('model', '=', 'project.task'), ('name', '=', values['task_id_external'])],
+                ['res_id'])
+            if len(result):
+                values['res_model'] = 'project.task'
+                values['res_id'] = result[0]['res_id']
+        elif values.get('project_id_external', False):
+            result = self.env['ir.model.data'].search_read(
+                [('model', '=', 'project.project'), ('name', '=', values['project_id_external'])],
+                ['res_id'])
+            if len(result):
+                values['res_model'] = 'project.project'
+                values['res_id'] = result[0]['res_id']
+
+        # remove computed field depending of datas
+        for field in ('file_size', 'checksum'):
+            values.pop(field, False)
+        values = self._check_contents(values)
+        self.browse().check('write', values=values)
+        return super(IrAttachmentDF, self).create(values)

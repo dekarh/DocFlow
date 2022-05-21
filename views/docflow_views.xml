@@ -25,7 +25,26 @@
           <field name="text"/>
           <field name="value"/>
           <field name="task_id"/>
+          <!--
+          <button name="create_file" string="Создать файл" type="object" class="oe_highlight"/>
+          <button name="delete_file" string="Удалить файл" type="object" class="oe_highlight"/>
+          -->
         </tree>
+      </field>
+    </record>
+
+    <record id="view_attachment_form_inherit" model="ir.ui.view">
+      <field name="name">ir.attachment.pf.inherit</field>
+      <field name="model">ir.attachment</field>
+      <field name="inherit_id" ref="base.view_attachment_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//group[last()]" position="before">
+          <group string="From PlanFix" groups="base.group_no_one">
+            <field name="file_id_pf"/>
+            <field name="file_version_pf"/>
+            <field name="file_path_pf"/>
+          </group>
+        </xpath>
       </field>
     </record>
 
